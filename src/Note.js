@@ -1,24 +1,6 @@
-import React, { useState, useEffect } from 'react';
-
-const ViewNote = ({ title, content, onDelete, onToggle }) => {
-    return (
-        <div>
-            <h1>{title}</h1>
-            <p>{content}</p>
-            <button onClick={() => onDelete()}>delete</button>
-            <button onClick={() => onToggle()}>edit</button>
-        </div>
-    )
-};
-
-const EditNote = ({ title, content, onToggle }) => {
-    return (
-        <div>
-            XD
-            <button onClick={() => onToggle()}>edit</button>
-        </div>
-    )
-};
+import React, { useState, useEffect, useCallback } from 'react';
+import ViewNote from './ViewNote';
+import EditNote from './EditNote';
 
 const Note = ({ title, content, index, onDelete }) => {
 
@@ -31,7 +13,6 @@ const Note = ({ title, content, index, onDelete }) => {
     const [note, setNote] = useState(initialState);
     const [edit, setEdit] = useState(false);
 
-
     useEffect(() => {
         window.localStorage.setItem(`note-${index}`, JSON.stringify(note));
         return () => {
@@ -39,15 +20,27 @@ const Note = ({ title, content, index, onDelete }) => {
         }
     }, [index, note]);
 
-    const onToggle = () => {
+    const onEdit = useCallback(() => {
         setEdit(!edit);
-    }
+    }, [edit]);
+
+    const onConfirm = useCallback((event, newTitle, newContent) => {
+        event.preventDefault();
+
+        setNote({
+            ...note,
+            noteTitle: newTitle,
+            noteContent: newContent,
+        });
+
+        setEdit(!edit);
+    }, [edit, note]);
 
     return (
         <>
             {!edit ? (
-                <ViewNote title={note.noteTitle} content={note.noteContent} onDelete={() => onDelete()} onClick={() => onToggle()} />
-            ) : <EditNote onClick={() => onToggle()} />}
+                <ViewNote title={note.noteTitle} content={note.noteContent} onDelete={() => onDelete()} onClick={() => onEdit()} />
+            ) : <EditNote title={note.noteTitle} content={note.noteContent} onClick={() => onEdit()} onSubmit={(event, newTitle, newContent) => onConfirm(event, newTitle, newContent)} />}
         </>
     )
 }

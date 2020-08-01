@@ -43,6 +43,7 @@ const App = () => {
     setNotes(tempNotes);
   };
 
+
   const createNotes = () => {
     return notes.map((note, index) =>
       (
