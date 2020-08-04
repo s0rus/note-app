@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import Note from './Note';
+import Note from './components/Note';
+import Header from './components/Header';
+import { StyledButton, GlobalStyle, StyledForm, StyledLabel, StyledInputWrapper, StyledInput, StyledTextarea, StyledNote } from './styles';
 
 const App = () => {
-
 
   const initialState = JSON.parse(window.localStorage.getItem('notes')) || [];
   const [notes, setNotes] = useState(initialState);
@@ -15,10 +16,12 @@ const App = () => {
   }, [notes]);
 
   const updateTitle = useCallback((event) => {
+    if (event.target.value.length >= 20) return;
     setTitle(event.target.value);
   }, []);
 
   const updateContent = useCallback((event) => {
+    if (event.target.value.length >= 100) return;
     setContent(event.target.value);
   }, []);
 
@@ -47,31 +50,38 @@ const App = () => {
   const createNotes = () => {
     return notes.map((note, index) =>
       (
-        <Note
-          key={note.createdOn}
-          index={index}
-          title={note.noteTitle}
-          content={note.noteContent}
-          onDelete={() => onDelete(index)}
-        />
+        <StyledNote key={note.createdOn}>
+          <Note
+            index={index}
+            title={note.noteTitle}
+            content={note.noteContent}
+            onDelete={() => onDelete(index)}
+          />
+        </StyledNote>
       )
     );
   }
 
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <form onSubmit={formSubmitted}>
-          <label htmlFor="note-title-input">Title</label>
-          <input type="text" id="note-title-input" name="note-title-input" value={title} onChange={updateTitle} /><br />
-          <label htmlFor="note-content-input">What's your note?</label><br />
-          <textarea name="note-content-input" id="note-content-input" cols="30" rows="10" value={content} onChange={updateContent}></textarea><br />
-          <button type="submit">ADD YOUR NOTE</button>
-        </form>
-      </header>
+    <>
+      <GlobalStyle />
+      <Header />
+      <section>
+        <StyledForm onSubmit={formSubmitted}>
+          <StyledInputWrapper>
+            <StyledLabel htmlFor="note-title-input">Title</StyledLabel><br />
+            <StyledInput placeholder="20 characters max." type="text" id="note-title-input" name="note-title-input" value={title} onChange={updateTitle} />
+          </StyledInputWrapper>
+          <StyledInputWrapper>
+            <StyledLabel htmlFor="note-content-input">What's your note?</StyledLabel>
+            <StyledTextarea placeholder="100 characters max." name="note-content-input" id="note-content-input" value={content} onChange={updateContent}></StyledTextarea>
+          </StyledInputWrapper>
+          <StyledButton primary type="submit">Create</StyledButton>
+        </StyledForm>
+      </section>
       {createNotes()}
-    </div>
+    </>
   );
 }
 

@@ -1,4 +1,5 @@
 import React, { useState, useCallback } from 'react';
+import { NoteBar, NoteContent, StyledButton, StyledInput, StyledTextarea } from '../styles';
 
 const EditNote = ({ title, content, onSubmit }) => {
 
@@ -14,15 +15,17 @@ const EditNote = ({ title, content, onSubmit }) => {
     }, []);
 
     return (
-        <div>
+        <>
             <form onSubmit={(event) => onSubmit(event, newTitle, newContent)}>
-                <label htmlFor="title">title</label>
-                <input value={newTitle} name="title" onChange={onNewTitle} /><br />
-                <label htmlFor="content">content</label><br />
-                <textarea name="content" cols="30" rows="10" value={newContent} onChange={onNewContent}></textarea><br />
-                <button type="submit">confirm</button>
+                <NoteBar>
+                    <StyledInput edit value={newTitle} name="title" onChange={onNewTitle} />
+                    <StyledButton type="submit"><span role="img" aria-label="confirmedit">✔</span></StyledButton>
+                </NoteBar>
+                <NoteContent>
+                    <StyledTextarea name="content" cols="30" rows="10" value={newContent} onChange={onNewContent}></StyledTextarea>
+                </NoteContent>
             </form>
-        </div >
+        </>
     )
 };
 
